@@ -85,6 +85,30 @@ T deg(T x) { return x*boost::math::constants::radian<T>(); }
 template < typename T >
 T rad(T x) { return x*boost::math::constants::degree<T>(); }
 
+/** @brief Equal */
+template < typename T >
+T eq(T x, T y) { return x == y; }
+
+/** @brief Not equal */
+template < typename T >
+T neq(T x, T y) { return x != y; }
+
+/** @brief Less equal */
+template < typename T >
+T leq(T x, T y) { return x <= y; }
+
+/** @brief Greater equal */
+template < typename T >
+T geq(T x, T y) { return x >= y; }
+
+/** @brief Less */
+template < typename T >
+T le(T x, T y) { return x < y; }
+
+/** @brief Greater */
+template < typename T >
+T ge(T x, T y) { return x > y; }
+
 }
 
 // AST
@@ -388,6 +412,7 @@ private:
     qi::rule<Iterator, expr_ast<real_t>(), ascii::space_type> expression;
     qi::rule<Iterator, expr_ast<real_t>(), ascii::space_type> term;
     qi::rule<Iterator, expr_ast<real_t>(), ascii::space_type> factor;
+    qi::rule<Iterator, expr_ast<real_t>(), ascii::space_type> relation;
     qi::rule<Iterator, expr_ast<real_t>(), ascii::space_type> primary;
     qi::rule<Iterator, std::string()> variable;
 public:
@@ -495,6 +520,13 @@ public:
         auto fmod = static_cast<real_t(*)(real_t,real_t)>(&std::fmod);
         auto pow = static_cast<real_t(*)(real_t,real_t)>(&std::pow);
 
+        auto eq  = static_cast<real_t(*)(real_t,real_t)>(&math::eq );
+        auto neq = static_cast<real_t(*)(real_t,real_t)>(&math::neq);
+        auto geq = static_cast<real_t(*)(real_t,real_t)>(&math::geq);
+        auto leq = static_cast<real_t(*)(real_t,real_t)>(&math::leq);
+        auto ge  = static_cast<real_t(*)(real_t,real_t)>(&math::ge );
+        auto le  = static_cast<real_t(*)(real_t,real_t)>(&math::le );
+
         expression =
             term                  [_val =  _1]
             >> *(  ('+' > term    [_val += _1])
@@ -511,8 +543,19 @@ public:
             ;
 
         factor =
-            primary               [_val =  _1]
+            relation              [_val =  _1]
             >> *(  ("**" > factor [_val = binary_expr(pow, _val, _1)])
+                )
+            ;
+
+        relation =
+            primary                 [_val =  _1]
+            >> *(  (">=" > relation [_val = binary_expr(geq, _val, _1)])
+                |  ("<=" > relation [_val = binary_expr(leq, _val, _1)])
+                |  ('>'  > relation [_val = binary_expr(ge , _val, _1)])
+                |  ('<'  > relation [_val = binary_expr(le , _val, _1)])
+                |  ("==" > relation [_val = binary_expr(eq , _val, _1)])
+                |  ("!=" > relation [_val = binary_expr(neq, _val, _1)])
                 )
             ;
 
@@ -536,6 +579,7 @@ public:
         term.name("term");
         factor.name("factor");
         variable.name("variable");
+        relation.name("relation");
         primary.name("primary");
 
         using boost::spirit::qi::fail;
