@@ -1,0 +1,12 @@
+{
+    "name": "boost-matheval",
+    "version-string": "0",
+    "dependencies": [
+        "boost-fusion",
+        "boost-math",
+        "boost-phoenix",
+        "boost-spirit",
+        "boost-test",
+        "readline"
+    ]
+}

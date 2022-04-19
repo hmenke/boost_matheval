@@ -1,0 +1,45 @@
+name: Linux
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -qq \
+            doxygen \
+            lcov \
+            libboost-dev \
+            libboost-test-dev \
+
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake -DWITH_COVERAGE=On -DCMAKE_BUILD_TYPE=Debug ..
+          cmake --build . --target examples --config Debug
+          cmake --build . --target check --config Debug
+
+          # Collect coverage data
+          lcov --directory . --capture --output-file coverage.info;
+          lcov --remove coverage.info '/usr/*' '*/examples/*' --output-file coverage.info;
+          cmake --build . --target doxygen --config Debug
+          genhtml coverage.info --output-directory doc/coverage/html/;
+          cd -
+
+      - name: Prepare pages
+        run: |
+          mkdir -p public/doxygen/ public/coverage/
+          cp -r build/doc/doxygen/html public/doxygen/
+          cp -r build/doc/coverage/html public/coverage/
+
+      - name: Deploy pages
+        if: github.ref == 'refs/heads/master'
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          branch: gh-pages
+          folder: public

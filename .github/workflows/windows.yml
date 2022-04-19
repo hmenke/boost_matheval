@@ -1,0 +1,35 @@
+name: Windows
+
+on: push
+
+jobs:
+  build:
+    runs-on: windows-2019
+    env:
+      VCPKG_ROOT: '${{ github.workspace }}/vcpkg'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache dependencies
+        id: cache-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ env.VCPKG_ROOT }}
+            ${{ github.workspace }}/build/vcpkg_installed
+            !${{ env.VCPKG_ROOT }}/.git
+            !${{ env.VCPKG_ROOT }}/buildtrees
+            !${{ env.VCPKG_ROOT }}/packages
+            !${{ env.VCPKG_ROOT }}/downloads
+          key: ${{ hashFiles('vcpkg.json') }}-${{ runner.os }}-cache-key-v1
+
+      - name: Build
+        shell: cmd
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          call %CONDA%\Scripts\activate.bat
+          md build
+          cd build
+          cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE -DCMAKE_TOOLCHAIN_FILE="%VCPKG_INSTALLATION_ROOT%\scripts\buildsystems\vcpkg.cmake" ..
+          cmake --build ./examples --target examples --config Debug
+          cmake --build ./tests --target check --config Debug
