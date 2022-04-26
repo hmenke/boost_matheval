@@ -1,10 +1,9 @@
 # Boost Matheval
 
-[![Build status][travis-svg]][travis-link]
-[![AppVeyor build status][appveyor-svg]][appveyor-link]
-[![Code coverage report][codecov-svg]][codecov-link]
-[Documentation][doxygen-link]
-[Coverage][coverage-link]
+[![Linux](https://github.com/hmenke/boost_matheval/actions/workflows/linux.yml/badge.svg)](https://github.com/hmenke/boost_matheval/actions/workflows/linux.yml)
+[![Windows](https://github.com/hmenke/boost_matheval/actions/workflows/windows.yml/badge.svg)](https://github.com/hmenke/boost_matheval/actions/workflows/windows.yml)
+[Documentation](https://hmenke.github.io/boost_matheval/doxygen/html/)
+[Coverage](https://hmenke.github.io/boost_matheval/coverage/html/)
 
 This library uses [Boost.Spirit](http://www.boost.org/libs/spirit/index.html)
 (QI for C++98 and X3 for C++14) and
@@ -103,12 +102,3 @@ General:
 ### License
 
 Distributed under the [Boost Software License, Version 1.0](http://boost.org/LICENSE_1_0.txt).
-
-[travis-svg]: https://travis-ci.org/hmenke/boost_matheval.svg?branch=master
-[travis-link]: https://travis-ci.org/hmenke/boost_matheval
-[appveyor-svg]: https://ci.appveyor.com/api/projects/status/bphe1739kownt81c/branch/master?svg=true
-[appveyor-link]: https://ci.appveyor.com/project/hmenke/boost-matheval/branch/master
-[codecov-svg]: https://codecov.io/gh/hmenke/boost_matheval/branch/master/graph/badge.svg
-[codecov-link]: https://codecov.io/gh/hmenke/boost_matheval
-[doxygen-link]: https://hmenke.github.io/boost_matheval/doxygen/html/
-[coverage-link]: https://hmenke.github.io/boost_matheval/coverage/html/
