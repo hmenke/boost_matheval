@@ -91,6 +91,16 @@ struct bfunc_ : x3::symbols<double (*)(double, double)> {
     }
 } bfunc;
 
+struct tfunc_ : x3::symbols<double (*)(double, double, double)> {
+    tfunc_() {
+        // clang-format off
+        add
+            ("ifthenelse", static_cast<double (*)(double, double, double)>(&math::ifthenelse))
+            ;
+        // clang-format on
+    }
+} tfunc;
+
 struct unary_op_ : x3::symbols<double (*)(double)> {
     unary_op_() {
         // clang-format off
@@ -183,6 +193,7 @@ struct factor_class;
 struct primary_class;
 struct unary_class;
 struct binary_class;
+struct ternary_class;
 struct variable_class;
 
 // clang-format off
@@ -199,6 +210,7 @@ auto const factor         = x3::rule<factor_class        , ast::expression>{"fac
 auto const primary        = x3::rule<primary_class       , ast::operand   >{"primary"};
 auto const unary          = x3::rule<unary_class         , ast::unary_op  >{"unary"};
 auto const binary         = x3::rule<binary_class        , ast::binary_op >{"binary"};
+auto const ternary        = x3::rule<ternary_class       , ast::ternary_op>{"ternary"};
 auto const variable       = x3::rule<variable_class      , std::string    >{"variable"};
 
 // Rule defintions
@@ -239,6 +251,10 @@ auto const binary_def =
     bfunc > '(' > expression > ',' > expression > ')'
     ;
 
+auto const ternary_def =
+    tfunc > '(' > expression > ',' > expression > ',' > expression > ')'
+    ;
+
 auto const variable_def =
     x3::raw[x3::lexeme[x3::alpha >> *(x3::alnum | '_')]]
     ;
@@ -247,6 +263,7 @@ auto const primary_def =
       x3::double_
     | ('(' > expression > ')')
     | (unary_op > primary)
+    | ternary
     | binary
     | unary
     | constant
@@ -264,6 +281,7 @@ BOOST_SPIRIT_DEFINE(
     primary,
     unary,
     binary,
+    ternary,
     variable
 )
 

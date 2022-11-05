@@ -28,6 +28,8 @@ struct ConstantFolder {
 
     result_type operator()(binary_op const &x) const;
 
+    result_type operator()(ternary_op const &x) const;
+
     result_type operator()(expression const &x) const;
 };
 
@@ -47,6 +49,8 @@ struct eval {
     double operator()(unary_op const &x) const;
 
     double operator()(binary_op const &x) const;
+
+    double operator()(ternary_op const &x) const;
 
     double operator()(expression const &x) const;
 

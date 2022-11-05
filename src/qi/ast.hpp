@@ -16,6 +16,7 @@ namespace ast {
 struct nil {};
 struct unary_op;
 struct binary_op;
+struct ternary_op;
 struct expression;
 
 // clang-format off
@@ -25,6 +26,7 @@ typedef boost::variant<
         , std::string
         , boost::recursive_wrapper<unary_op>
         , boost::recursive_wrapper<binary_op>
+        , boost::recursive_wrapper<ternary_op>
         , boost::recursive_wrapper<expression>
         >
 operand;
@@ -45,6 +47,17 @@ struct binary_op {
     binary_op(double (*op)(double, double), operand const &lhs,
               operand const &rhs)
         : op(op), lhs(lhs), rhs(rhs) {}
+};
+
+struct ternary_op {
+    double (*op)(double, double, double);
+    operand cond;
+    operand t;
+    operand f;
+    ternary_op() {}
+    ternary_op(double (*op)(double, double, double), operand const &cond,
+	      operand const &t, operand const &f)
+        : op(op), cond(cond), t(t), f(f) {}
 };
 
 struct operation {

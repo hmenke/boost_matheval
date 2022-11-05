@@ -29,6 +29,9 @@ EXPRTEST(func_tanh  , "tanh  ( 1.0)", std::tanh  ( 1.0))
 EXPRTEST(func_atan2, "atan2(2.0, 3.0)", std::atan2(2.0,3.0))
 EXPRTEST(func_pow,   "pow  (2.0, 3.0)", std::pow(2.0,3.0))
 
+EXPRTEST(func_ifthen, "ifthenelse(1.0, 2.0, 3.0)", 2.0)
+EXPRTEST(func_ifelse, "ifthenelse(0.0, 2.0, 3.0)", 3.0)
+
 #if __cplusplus >= 201402L
 EXPRTEST(func_acosh , "acosh ( 1.0)", std::acosh ( 1.0))
 EXPRTEST(func_asinh , "asinh ( 1.0)", std::asinh ( 1.0))

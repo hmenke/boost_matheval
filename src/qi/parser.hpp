@@ -43,6 +43,7 @@ struct grammar : qi::grammar<Iterator, ast::expression(), ascii::space_type> {
     qi::rule<Iterator, ast::operand(), ascii::space_type> primary;
     qi::rule<Iterator, ast::unary_op(), ascii::space_type> unary;
     qi::rule<Iterator, ast::binary_op(), ascii::space_type> binary;
+    qi::rule<Iterator, ast::ternary_op(), ascii::space_type> ternary;
     qi::rule<Iterator, std::string()> variable;
 
     qi::symbols<typename std::iterator_traits<Iterator>::value_type, double>
@@ -53,6 +54,9 @@ struct grammar : qi::grammar<Iterator, ast::expression(), ascii::space_type> {
     qi::symbols<typename std::iterator_traits<Iterator>::value_type,
                 double (*)(double, double)>
         bfunc, additive_op, multiplicative_op, logical_op, relational_op, equality_op, power;
+    qi::symbols<typename std::iterator_traits<Iterator>::value_type,
+                double (*)(double, double, double)>
+        tfunc;
 
     grammar();
 };

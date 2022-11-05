@@ -75,6 +75,10 @@ grammar<Iterator>::grammar() : grammar::base_type(expression) {
         ("pow"  , static_cast<double (*)(double, double)>(&std::pow))
         ;
 
+    tfunc.add
+        ("ifthenelse", static_cast<double (*)(double, double, double)>(&math::ifthenelse))
+        ;
+
     unary_op.add
         ("+", static_cast<double (*)(double)>(&math::plus))
         ("-", static_cast<double (*)(double)>(&math::minus))
@@ -149,6 +153,10 @@ grammar<Iterator>::grammar() : grammar::base_type(expression) {
         bfunc > '(' > expression > ',' > expression > ')'
         ;
 
+    ternary =
+        tfunc > '(' > expression > ',' > expression > ',' > expression > ')'
+        ;
+
     variable =
         raw[lexeme[alpha >> *(alnum | '_')]]
         ;
@@ -157,6 +165,7 @@ grammar<Iterator>::grammar() : grammar::base_type(expression) {
           double_
         | ('(' > expression > ')')
         | (unary_op > primary)
+        | ternary
         | binary
         | unary
         | constant
@@ -176,6 +185,7 @@ grammar<Iterator>::grammar() : grammar::base_type(expression) {
     primary.name("primary");
     unary.name("unary");
     binary.name("binary");
+    ternary.name("ternary");
 
     // typedef boost::phoenix::function<error_handler<Iterator> >
     // error_handler_function; qi::on_error<qi::fail>(expression,

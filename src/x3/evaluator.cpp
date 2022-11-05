@@ -74,6 +74,21 @@ operator()(binary_op const &x) const {
 }
 
 ConstantFolder::result_type ConstantFolder::
+operator()(ternary_op const &x) const {
+    auto cond = boost::apply_visitor(*this, x.cond);
+    auto t = boost::apply_visitor(*this, x.t);
+    auto f = boost::apply_visitor(*this, x.f);
+
+    /// If both operands are known, we can directly evaluate the function,
+    /// else we just update the children with the new expressions.
+    if (holds_alternative<double>(cond) && holds_alternative<double>(t) && holds_alternative<double>(f)) {
+        return result_type{
+            x.op(boost::get<double>(cond), boost::get<double>(t), boost::get<double>(f))};
+    }
+    return result_type{ternary_op{x.op, cond, t, f}};
+}
+
+ConstantFolder::result_type ConstantFolder::
 operator()(expression const &x) const {
     auto state = boost::apply_visitor(*this, x.lhs);
     for (operation const &oper : x.rhs) {
@@ -113,6 +128,13 @@ double eval::operator()(binary_op const &x) const {
     double lhs = boost::apply_visitor(*this, x.lhs);
     double rhs = boost::apply_visitor(*this, x.rhs);
     return x.op(lhs, rhs);
+}
+
+double eval::operator()(ternary_op const &x) const {
+    double cond = boost::apply_visitor(*this, x.cond);
+    double t = boost::apply_visitor(*this, x.t);
+    double f = boost::apply_visitor(*this, x.f);
+    return x.op(cond, t, f);
 }
 
 double eval::operator()(expression const &x) const {

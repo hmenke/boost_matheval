@@ -19,6 +19,7 @@ namespace ast {
 struct nil {};
 struct unary_op;
 struct binary_op;
+struct ternary_op;
 struct expression;
 
 // clang-format off
@@ -28,6 +29,7 @@ struct operand : x3::variant<
                  , std::string
                  , x3::forward_ast<unary_op>
                  , x3::forward_ast<binary_op>
+                 , x3::forward_ast<ternary_op>
                  , x3::forward_ast<expression>
                  > {
     using base_type::base_type;
@@ -44,6 +46,13 @@ struct binary_op {
     double (*op)(double, double);
     operand lhs;
     operand rhs;
+};
+
+struct ternary_op {
+    double (*op)(double, double, double);
+    operand cond;
+    operand t;
+    operand f;
 };
 
 struct operation {

@@ -132,6 +132,12 @@ T not_equals(T x, T y) {
     return x != y;
 }
 
+/// @brief if then else
+template <typename T>
+T ifthenelse(T cond, T t, T f) {
+    return (cond ? t : f);
+}
+
 } // namespace math
 
 } // namespace matheval
